@@ -37,7 +37,7 @@ namespace Sqlite {
 
 namespace Internal {
 
-class SessionsBase
+class SQLITE_EXPORT SessionsBase
 {
 public:
     SessionsBase(Database &database, Utils::SmallStringView sessionsTableName)
@@ -53,7 +53,7 @@ public:
 };
 } // namespace Internal
 
-class Sessions : public Internal::SessionsBase
+class SQLITE_EXPORT Sessions : public Internal::SessionsBase
 {
 public:
     Sessions(Database &database,
