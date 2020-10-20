@@ -25,6 +25,7 @@
 
 #include "nodeinstanceserverdispatcher.h"
 
+#include "quick3dnodeinstanceserver.h"
 #include "qt5captureimagenodeinstanceserver.h"
 #include "qt5capturepreviewnodeinstanceserver.h"
 #include "qt5informationnodeinstanceserver.h"
@@ -191,6 +192,8 @@ std::unique_ptr<NodeInstanceServer> createNodeInstanceServer(
     else if (serverName == "editormode")
         return std::make_unique<Qt5InformationNodeInstanceServer>(nodeInstanceClient);
     else if (serverName == "previewmode")
+        return std::make_unique<Qt5PreviewNodeInstanceServer>(nodeInstanceClient);
+    else if (serverName == "qt3dmode")
         return std::make_unique<Qt5PreviewNodeInstanceServer>(nodeInstanceClient);
 
     return {};

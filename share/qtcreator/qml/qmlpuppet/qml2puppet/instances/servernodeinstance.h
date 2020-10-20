@@ -178,6 +178,8 @@ public:
     void updateDirtyNodeRecursive();
     bool holdsGraphical() const;
 
+    QObject *internalObject() const; // should be not used outside of the nodeinstances!!!!
+
 private: // functions
     ServerNodeInstance(const QSharedPointer<Internal::ObjectNodeInstance> &abstractInstance);
 
@@ -211,7 +213,6 @@ private: // functions
 
     void setNodeSource(const QString &source);
 
-    QObject *internalObject() const; // should be not used outside of the nodeinstances!!!!
 
 private: // variables
     QSharedPointer<Internal::ObjectNodeInstance> m_nodeInstance;

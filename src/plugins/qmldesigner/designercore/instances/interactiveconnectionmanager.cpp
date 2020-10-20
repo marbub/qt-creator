@@ -41,6 +41,7 @@ InteractiveConnectionManager::InteractiveConnectionManager()
     connections().emplace_back("Editor", "editormode");
     connections().emplace_back("Render", "rendermode");
     connections().emplace_back("Preview", "previewmode");
+    connections().emplace_back("Qt3D", "qt3dmode");
 }
 
 void InteractiveConnectionManager::setUp(NodeInstanceServerInterface *nodeInstanceServer,

@@ -34,4 +34,5 @@ using PropertyName = QByteArray;
 using PropertyNameList = QList<PropertyName>;
 using TypeName = QByteArray;
 
+enum class TransactionOption { Start = 1, End = 2, None = 0 };
 }

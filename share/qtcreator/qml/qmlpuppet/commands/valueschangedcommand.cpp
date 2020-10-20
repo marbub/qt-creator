@@ -99,8 +99,8 @@ QDataStream &operator<<(QDataStream &out, const ValuesChangedCommand &command)
 
     QVector<PropertyValueContainer> propertyValueContainer = command.valueChanges();
 
-    if (command.transactionOption != ValuesChangedCommand::TransactionOption::None) {
-        PropertyValueContainer optionContainer(command.transactionOption);
+    if (command.transactionOption != TransactionOption::None) {
+        PropertyValueContainer optionContainer(static_cast<qint32>(command.transactionOption));
         propertyValueContainer.append(optionContainer);
     }
 
@@ -166,8 +166,8 @@ QDataStream &operator>>(QDataStream &in, ValuesChangedCommand &command)
 
     // '-option-' is not a valid property name and indicates that we store the transaction option.
     if (!valueChangeVector.isEmpty() && valueChangeVector.last().name() == "-option-") {
-        command.transactionOption =
-            static_cast<ValuesChangedCommand::TransactionOption>(valueChangeVector.last().instanceId());
+        command.transactionOption = static_cast<TransactionOption>(
+            valueChangeVector.back().instanceId());
         valueChangeVector.removeLast();
     }
 

@@ -7,7 +7,6 @@ versionAtLeast(QT_VERSION, 5.15.0):qtHaveModule(quick3d) {
 
 HEADERS += $$PWD/qt5nodeinstanceserver.h \
     $$PWD/capturenodeinstanceserverdispatcher.h \
-    $$PWD/capturescenecreatedcommand.h \
     $$PWD/nodeinstanceserverdispatcher.h \
     $$PWD/qt5captureimagenodeinstanceserver.h \
     $$PWD/qt5capturepreviewnodeinstanceserver.h \
@@ -16,6 +15,7 @@ HEADERS += $$PWD/qt5nodeinstanceserver.h \
     $$PWD/qt5rendernodeinstanceserver.h \
     $$PWD/qt5previewnodeinstanceserver.h \
     $$PWD/qt5nodeinstanceclientproxy.h \
+    $$PWD/quick3dnodeinstanceserver.h \
     $$PWD/quickitemnodeinstance.h \
     $$PWD/behaviornodeinstance.h \
     $$PWD/dummycontextobject.h \
@@ -47,6 +47,7 @@ SOURCES += $$PWD/qt5nodeinstanceserver.cpp \
     $$PWD/qt5rendernodeinstanceserver.cpp \
     $$PWD/qt5previewnodeinstanceserver.cpp \
     $$PWD/qt5nodeinstanceclientproxy.cpp \
+    $$PWD/quick3dnodeinstanceserver.cpp \
     $$PWD/quickitemnodeinstance.cpp \
     $$PWD/behaviornodeinstance.cpp \
     $$PWD/dummycontextobject.cpp \

@@ -8,7 +8,7 @@ endif()
 add_qtc_library(qml2puppet_static
   STATIC
   DEPENDS
-  Qt5::CorePrivate Qt5::Widgets
+  Qt5::CorePrivate Qt5::Widgets Utils
   PUBLIC_INCLUDES "${SRCDIR}/interfaces"
   SOURCES_PREFIX "${SRCDIR}/interfaces"
   SOURCES
@@ -170,6 +170,7 @@ extend_qtc_executable(qml2puppet
     qmltransitionnodeinstance.cpp qmltransitionnodeinstance.h
     qt3dpresentationnodeinstance.cpp qt3dpresentationnodeinstance.h
     qt5informationnodeinstanceserver.cpp qt5informationnodeinstanceserver.h
+    quick3dnodeinstanceserver.cpp quick3dnodeinstanceserver.h
     qt5nodeinstanceclientproxy.cpp qt5nodeinstanceclientproxy.h
     qt5nodeinstanceserver.cpp qt5nodeinstanceserver.h
     qt5previewnodeinstanceserver.cpp qt5previewnodeinstanceserver.h

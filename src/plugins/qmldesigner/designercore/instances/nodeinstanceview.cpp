@@ -1258,7 +1258,7 @@ void NodeInstanceView::valuesModified(const ValuesModifiedCommand &command)
     if (!model())
         return;
 
-    if (command.transactionOption == ValuesModifiedCommand::TransactionOption::Start)
+    if (command.transactionOption == TransactionOption::Start)
         startPuppetTransaction();
 
     for (const PropertyValueContainer &container : command.valueChanges()) {
@@ -1273,7 +1273,7 @@ void NodeInstanceView::valuesModified(const ValuesModifiedCommand &command)
         }
     }
 
-    if (command.transactionOption == ValuesModifiedCommand::TransactionOption::End)
+    if (command.transactionOption == TransactionOption::End)
         endPuppetTransaction();
 }
 

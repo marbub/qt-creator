@@ -28,6 +28,7 @@
 #include <QCoreApplication>
 
 #include "capturenodeinstanceserverdispatcher.h"
+#include "quick3dnodeinstanceserver.h"
 #include "qt5captureimagenodeinstanceserver.h"
 #include "qt5capturepreviewnodeinstanceserver.h"
 #include "qt5informationnodeinstanceserver.h"
@@ -95,6 +96,9 @@ Qt5NodeInstanceClientProxy::Qt5NodeInstanceClientProxy(QObject *parent) :
         initializeSocket();
     } else if (QCoreApplication::arguments().at(2) == QLatin1String("captureiconmode")) {
         setNodeInstanceServer(std::make_unique<Qt5CaptureImageNodeInstanceServer>(this));
+        initializeSocket();
+    } else if (QCoreApplication::arguments().at(2) == QLatin1String("qt3dmode")) {
+        setNodeInstanceServer(std::make_unique<Quick3dNodeInstanceServer>(this));
         initializeSocket();
     }
 }

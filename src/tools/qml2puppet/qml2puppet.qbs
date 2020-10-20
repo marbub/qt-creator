@@ -212,6 +212,8 @@ QtcTool {
             "instances/qt3dpresentationnodeinstance.h",
             "instances/qt5informationnodeinstanceserver.cpp",
             "instances/qt5informationnodeinstanceserver.h",
+            "instances/quick3dnodeinstanceserver.cpp",
+            "instances/quick3dnodeinstanceserver.h",
             "instances/qt5nodeinstanceclientproxy.cpp",
             "instances/qt5nodeinstanceclientproxy.h",
             "instances/qt5nodeinstanceserver.cpp",

@@ -31,6 +31,8 @@
 #include "qt5rendernodeinstanceserver.h"
 #include "scenecreatedcommand.h"
 
+#include <QTimer>
+
 namespace QmlDesigner {
 
 void CaptureNodeInstanceServerDispatcher::createScene(const CreateSceneCommand &command)

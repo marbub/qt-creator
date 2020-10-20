@@ -1,5 +1,5 @@
 QT += core gui widgets qml quick network
-QT += core-private qml-private quick-private gui-private
+QT += core-private qml-private quick-private gui-private quick3d-private
 
 CONFIG += c++17
 
