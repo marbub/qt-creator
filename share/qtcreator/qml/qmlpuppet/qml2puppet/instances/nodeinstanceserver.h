@@ -214,7 +214,7 @@ public slots:
     void emitParentChanged(QObject *child);
 
 protected:
-    virtual QList<ServerNodeInstance> createInstances(const QVector<InstanceContainer> &container);
+    virtual ServerNodeInstances createInstances(const QVector<InstanceContainer> &container);
     void reparentInstances(const QVector<ReparentContainer> &containerVector);
 
     Internal::ChildrenChangeEventFilter *childrenChangeEventFilter();
@@ -231,15 +231,16 @@ protected:
 
     void timerEvent(QTimerEvent *) override;
 
-
-    ValuesChangedCommand createValuesChangedCommand(const QList<ServerNodeInstance> &instanceList) const;
+    ValuesChangedCommand createValuesChangedCommand(const ServerNodeInstances &instanceList) const;
     ValuesChangedCommand createValuesChangedCommand(const QVector<InstancePropertyPair> &propertyList) const;
     ValuesModifiedCommand createValuesModifiedCommand(const QVector<InstancePropertyValueTriple> &propertyList) const;
-    PixmapChangedCommand createPixmapChangedCommand(const QList<ServerNodeInstance> &instanceList) const;
-    InformationChangedCommand createAllInformationChangedCommand(const QList<ServerNodeInstance> &instanceList, bool initial = false) const;
-    ChildrenChangedCommand createChildrenChangedCommand(const ServerNodeInstance &parentInstance, const QList<ServerNodeInstance> &instanceList) const;
-    ComponentCompletedCommand createComponentCompletedCommand(const QList<ServerNodeInstance> &instanceList);
-    ChangeSelectionCommand createChangeSelectionCommand(const QList<ServerNodeInstance> &instanceList);
+    PixmapChangedCommand createPixmapChangedCommand(const ServerNodeInstances &instanceList) const;
+    InformationChangedCommand createAllInformationChangedCommand(const ServerNodeInstances &instanceList,
+                                                                 bool initial = false) const;
+    ChildrenChangedCommand createChildrenChangedCommand(const ServerNodeInstance &parentInstance,
+                                                        const ServerNodeInstances &instanceList) const;
+    ComponentCompletedCommand createComponentCompletedCommand(const ServerNodeInstances &instanceList);
+    ChangeSelectionCommand createChangeSelectionCommand(const ServerNodeInstances &instanceList);
 
     void sheduleRootItemRender();
 
@@ -280,7 +281,7 @@ protected:
     void setupImports(const QVector<AddImportContainer> &container);
     void setupDummyData(const QUrl &fileUrl);
     void setupDefaultDummyData();
-    QList<ServerNodeInstance> setupInstances(const CreateSceneCommand &command);
+    ServerNodeInstances setupInstances(const CreateSceneCommand &command);
 
     QList<QQmlContext*> allSubContextsForObject(QObject *object);
     static QList<QObject*> allSubObjectsForObject(QObject *object);

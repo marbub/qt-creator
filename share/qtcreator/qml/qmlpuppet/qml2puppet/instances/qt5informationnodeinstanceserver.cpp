@@ -220,7 +220,7 @@ void Qt5InformationNodeInstanceServer::createScene(const CreateSceneCommand &com
 {
     Qt5NodeInstanceServer::createScene(command);
 
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (const InstanceContainer &container : command.instances) {
         if (hasInstanceForId(container.instanceId)) {
             ServerNodeInstance instance = instanceForId(container.instanceId);
@@ -237,10 +237,10 @@ void Qt5InformationNodeInstanceServer::createScene(const CreateSceneCommand &com
 
 }
 
-void Qt5InformationNodeInstanceServer::sendChildrenChangedCommand(const QList<ServerNodeInstance> &childList)
+void Qt5InformationNodeInstanceServer::sendChildrenChangedCommand(const ServerNodeInstances &childList)
 {
     QSet<ServerNodeInstance> parentSet;
-    QList<ServerNodeInstance> noParentList;
+    ServerNodeInstances noParentList;
 
     for (const ServerNodeInstance &child : childList) {
         if (child.isValid()) {
@@ -269,7 +269,7 @@ void Qt5InformationNodeInstanceServer::completeComponent(const CompleteComponent
 {
     Qt5NodeInstanceServer::completeComponent(command);
 
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (qint32 instanceId : command.instances) {
         if (hasInstanceForId(instanceId)) {
             ServerNodeInstance instance = instanceForId(instanceId);

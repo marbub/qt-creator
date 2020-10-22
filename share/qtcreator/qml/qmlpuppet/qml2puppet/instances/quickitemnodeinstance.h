@@ -77,7 +77,7 @@ public:
 
 
     QObject *parent() const override;
-    QList<ServerNodeInstance> childItems() const override;
+    ServerNodeInstances childItems() const override;
 
     void reparent(const ObjectNodeInstance::Pointer &oldParentInstance, const PropertyName &oldParentProperty, const ObjectNodeInstance::Pointer &newParentInstance, const PropertyName &newParentProperty) override;
 
@@ -94,7 +94,7 @@ public:
     bool isMovable() const override;
     bool isQuickItem() const override;
 
-    QList<ServerNodeInstance> stateInstances() const override;
+    ServerNodeInstances stateInstances() const override;
 
     void doComponentComplete() override;
 
@@ -117,7 +117,7 @@ protected:
     QRectF boundingRectWithStepChilds(QQuickItem *parentItem) const;
     void resetHorizontal();
     void resetVertical();
-    QList<ServerNodeInstance> childItemsForChild(QQuickItem *item) const;
+    ServerNodeInstances childItemsForChild(QQuickItem *item) const;
     void refresh();
     static bool anyItemHasContent(QQuickItem *quickItem);
     static bool childItemsHaveContent(QQuickItem *quickItem);

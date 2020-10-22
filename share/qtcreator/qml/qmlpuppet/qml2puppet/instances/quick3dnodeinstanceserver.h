@@ -78,9 +78,9 @@ private slots:
 
 protected:
     void collectItemChangesAndSendChangeCommands() override;
-    void selectInstances(const QList<ServerNodeInstance> &instanceList);
+    void selectInstances(const ServerNodeInstances &instanceList);
     void modifyProperties(const QVector<InstancePropertyValueTriple> &properties);
-    QList<ServerNodeInstance> createInstances(const QVector<InstanceContainer> &container) override;
+    ServerNodeInstances createInstances(const QVector<InstanceContainer> &container) override;
     void initializeAuxiliaryViews() override;
 
 private:
@@ -88,11 +88,11 @@ private:
     void handleSelectionChangeTimeout();
     void createEditView3D();
     void create3DPreviewView();
-    void setup3DEditView(const QList<ServerNodeInstance> &instanceList,
+    void setup3DEditView(const ServerNodeInstances &instanceList,
                          const QHash<QString, QVariantMap> &toolStates);
-    void createCameraAndLightGizmos(const QList<ServerNodeInstance> &instanceList) const;
-    void add3DViewPorts(const QList<ServerNodeInstance> &instanceList);
-    void add3DScenes(const QList<ServerNodeInstance> &instanceList);
+    void createCameraAndLightGizmos(const ServerNodeInstances &instanceList) const;
+    void add3DViewPorts(const ServerNodeInstances &instanceList);
+    void add3DScenes(const ServerNodeInstances &instanceList);
     QObject *findView3DForInstance(const ServerNodeInstance &instance) const;
     QObject *findView3DForSceneRoot(QObject *sceneRoot) const;
     QObject *find3DSceneRoot(const ServerNodeInstance &instance) const;

@@ -45,14 +45,14 @@ public:
 
 protected:
     void collectItemChangesAndSendChangeCommands() override;
-    void sendChildrenChangedCommand(const QList<ServerNodeInstance> &childList);
+    void sendChildrenChangedCommand(const ServerNodeInstances &childList);
     void sendTokenBack();
     bool isDirtyRecursiveForNonInstanceItems(QQuickItem *item) const;
     bool isDirtyRecursiveForParentInstances(QQuickItem *item) const;
 
 private:
     QSet<ServerNodeInstance> m_parentChangedSet;
-    QList<ServerNodeInstance> m_completedComponentList;
+    ServerNodeInstances m_completedComponentList;
     QList<TokenCommand> m_tokenList;
 };
 

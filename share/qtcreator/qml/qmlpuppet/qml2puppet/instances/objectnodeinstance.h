@@ -139,7 +139,7 @@ public:
     virtual QString instanceType(const PropertyName &name) const;
     PropertyNameList propertyNames() const;
 
-    virtual QList<ServerNodeInstance> childItems() const;
+    virtual ServerNodeInstances childItems() const;
     virtual QList<QQuickItem*> allItemsRecursive() const;
 
     void setDeleteHeldInstance(bool deleteInstance);
@@ -188,7 +188,7 @@ public:
 
     virtual void doComponentComplete();
 
-    virtual QList<ServerNodeInstance> stateInstances() const;
+    virtual ServerNodeInstances stateInstances() const;
 
     virtual void setNodeSource(const QString &source);
 

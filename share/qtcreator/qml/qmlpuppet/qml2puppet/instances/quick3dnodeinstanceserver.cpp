@@ -191,7 +191,7 @@ void Quick3dNodeInstanceServer::createEditView3D()
 // The selection has changed in the edit view 3D. Empty list indicates selection is cleared.
 void Quick3dNodeInstanceServer::handleSelectionChanged(const QVariant &objs)
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     const QVariantList varObjs = objs.value<QVariantList>();
     for (const auto &object : varObjs) {
         auto obj = object.value<QObject *>();
@@ -791,7 +791,7 @@ Quick3dNodeInstanceServer::~Quick3dNodeInstanceServer()
 }
 
 /* This method allows changing the selection from the puppet */
-void Quick3dNodeInstanceServer::selectInstances(const QList<ServerNodeInstance> &instanceList)
+void Quick3dNodeInstanceServer::selectInstances(const ServerNodeInstances &instanceList)
 {
     nodeInstanceClient()->selectionChanged(createChangeSelectionCommand(instanceList));
 }
@@ -805,8 +805,7 @@ void Quick3dNodeInstanceServer::modifyProperties(
     nodeInstanceClient()->valuesModified(createValuesModifiedCommand(properties));
 }
 
-QList<ServerNodeInstance> Quick3dNodeInstanceServer::createInstances(
-    const QVector<InstanceContainer> &container)
+ServerNodeInstances Quick3dNodeInstanceServer::createInstances(const QVector<InstanceContainer> &container)
 {
     const auto createdInstances = NodeInstanceServer::createInstances(container);
 
@@ -863,7 +862,7 @@ void Quick3dNodeInstanceServer::handleSelectionChangeTimeout()
     changeSelection(m_lastSelectionChangeCommand);
 }
 
-void Quick3dNodeInstanceServer::createCameraAndLightGizmos(const QList<ServerNodeInstance> &instanceList) const
+void Quick3dNodeInstanceServer::createCameraAndLightGizmos(const ServerNodeInstances &instanceList) const
 {
     QHash<QObject *, QObjectList> cameras;
     QHash<QObject *, QObjectList> lights;
@@ -899,7 +898,7 @@ void Quick3dNodeInstanceServer::createCameraAndLightGizmos(const QList<ServerNod
     }
 }
 
-void Quick3dNodeInstanceServer::add3DViewPorts(const QList<ServerNodeInstance> &instanceList)
+void Quick3dNodeInstanceServer::add3DViewPorts(const ServerNodeInstances &instanceList)
 {
     for (const ServerNodeInstance &instance : instanceList) {
         if (instance.isSubclassOf("QQuick3DViewport")) {
@@ -917,7 +916,7 @@ void Quick3dNodeInstanceServer::add3DViewPorts(const QList<ServerNodeInstance> &
     }
 }
 
-void Quick3dNodeInstanceServer::add3DScenes(const QList<ServerNodeInstance> &instanceList)
+void Quick3dNodeInstanceServer::add3DScenes(const ServerNodeInstances &instanceList)
 {
     for (const ServerNodeInstance &instance : instanceList) {
         if (instance.isSubclassOf("QQuick3DNode")) {
@@ -1075,7 +1074,7 @@ QObject *Quick3dNodeInstanceServer::find3DSceneRoot(QObject *obj) const
     return nullptr;
 }
 
-void Quick3dNodeInstanceServer::setup3DEditView(const QList<ServerNodeInstance> &instanceList,
+void Quick3dNodeInstanceServer::setup3DEditView(const ServerNodeInstances &instanceList,
                                                 const QHash<QString, QVariantMap> &toolStates)
 {
 #ifdef QUICK3D_MODULE
@@ -1194,7 +1193,7 @@ void Quick3dNodeInstanceServer::createScene(const CreateSceneCommand &command)
 {
     Qt5NodeInstanceServer::createScene(command);
 
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (const InstanceContainer &container : command.instances) {
         if (hasInstanceForId(container.instanceId)) {
             ServerNodeInstance instance = instanceForId(container.instanceId);

@@ -95,6 +95,8 @@ public:
         DoNotWrapAsComponent
     };
 
+    using ServerNodeInstances = QList<ServerNodeInstance>;
+
     ServerNodeInstance();
     ~ServerNodeInstance();
     ServerNodeInstance(const ServerNodeInstance &other);
@@ -159,7 +161,7 @@ public:
 
     void doComponentComplete();
 
-    QList<ServerNodeInstance> childItems() const;
+    ServerNodeInstances childItems() const;
 
     QQuickItem *rootQuickItem() const;
     QList<QQuickItem *> allItemsRecursive() const;
@@ -169,7 +171,7 @@ public:
 
     QSharedPointer<Internal::ObjectNodeInstance> internalInstance() const;
 
-    QList<ServerNodeInstance> stateInstances() const;
+    ServerNodeInstances stateInstances() const;
     QStringList allStates() const;
 
     static bool isSubclassOf(QObject *object, const QByteArray &superTypeName);
@@ -217,6 +219,8 @@ private: // functions
 private: // variables
     QSharedPointer<Internal::ObjectNodeInstance> m_nodeInstance;
 };
+
+using ServerNodeInstances = ServerNodeInstance::ServerNodeInstances;
 
 uint qHash(const ServerNodeInstance &instance);
 bool operator ==(const ServerNodeInstance &first, const ServerNodeInstance &second);

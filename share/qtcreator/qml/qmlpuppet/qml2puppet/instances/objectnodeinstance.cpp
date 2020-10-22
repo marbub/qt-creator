@@ -608,9 +608,9 @@ QString ObjectNodeInstance::instanceType(const PropertyName &name) const
     return QString::fromUtf8(property.propertyTypeName());
 }
 
-QList<ServerNodeInstance> ObjectNodeInstance::childItems() const
+ServerNodeInstances ObjectNodeInstance::childItems() const
 {
-    return QList<ServerNodeInstance>();
+    return ServerNodeInstances();
 }
 
 QList<QQuickItem *> ObjectNodeInstance::allItemsRecursive() const
@@ -618,9 +618,9 @@ QList<QQuickItem *> ObjectNodeInstance::allItemsRecursive() const
     return QList<QQuickItem *>();
 }
 
-QList<ServerNodeInstance>  ObjectNodeInstance::stateInstances() const
+ServerNodeInstances  ObjectNodeInstance::stateInstances() const
 {
-    return QList<ServerNodeInstance>();
+    return ServerNodeInstances();
 }
 
 void ObjectNodeInstance::setNodeSource(const QString & /*source*/)

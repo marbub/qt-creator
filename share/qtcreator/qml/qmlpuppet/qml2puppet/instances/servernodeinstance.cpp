@@ -651,7 +651,7 @@ void ServerNodeInstance::doComponentComplete()
     m_nodeInstance->doComponentComplete();
 }
 
-QList<ServerNodeInstance> ServerNodeInstance::childItems() const
+ServerNodeInstances ServerNodeInstance::childItems() const
 {
     return m_nodeInstance->childItems();
 }
@@ -682,7 +682,7 @@ qint32 ServerNodeInstance::instanceId() const
     return -1;
 }
 
-QList<ServerNodeInstance> ServerNodeInstance::stateInstances() const
+ServerNodeInstances ServerNodeInstance::stateInstances() const
 {
     return m_nodeInstance->stateInstances();
 }

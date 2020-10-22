@@ -101,9 +101,9 @@ QObject *QuickItemNodeInstance::parent() const
     return quickItem()->parentItem();
 }
 
-QList<ServerNodeInstance> QuickItemNodeInstance::childItems() const
+ServerNodeInstances QuickItemNodeInstance::childItems() const
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
 
     foreach (QQuickItem *childItem, quickItem()->childItems())
     {
@@ -493,9 +493,9 @@ bool QuickItemNodeInstance::isQuickItem() const
     return true;
 }
 
-QList<ServerNodeInstance> QuickItemNodeInstance::stateInstances() const
+ServerNodeInstances QuickItemNodeInstance::stateInstances() const
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     QList<QObject*> stateList = DesignerSupport::statesForItem(quickItem());
     foreach (QObject *state, stateList)
     {
@@ -599,9 +599,9 @@ void QuickItemNodeInstance::resetVertical()
     }
 }
 
-QList<ServerNodeInstance> QuickItemNodeInstance::childItemsForChild(QQuickItem *item) const
+ServerNodeInstances QuickItemNodeInstance::childItemsForChild(QQuickItem *item) const
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
 
     if (item) {
         foreach (QQuickItem *childItem, item->childItems())

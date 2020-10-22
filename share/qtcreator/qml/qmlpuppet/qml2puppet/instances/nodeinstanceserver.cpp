@@ -189,10 +189,10 @@ NodeInstanceServer::NodeInstanceServer(NodeInstanceClientInterface *nodeInstance
     Internal::QmlPrivateGate::registerFixResourcePathsForObjectCallBack();
 }
 
-QList<ServerNodeInstance> NodeInstanceServer::createInstances(const QVector<InstanceContainer> &containerVector)
+ServerNodeInstances NodeInstanceServer::createInstances(const QVector<InstanceContainer> &containerVector)
 {
     Q_ASSERT(declarativeView() || quickView());
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (const InstanceContainer &instanceContainer : containerVector) {
         ServerNodeInstance instance;
         if (instanceContainer.nodeSourceType == InstanceContainer::ComponentSource) {
@@ -414,7 +414,7 @@ void NodeInstanceServer::changeState(const ChangeStateCommand &command)
 
 void NodeInstanceServer::completeComponent(const CompleteComponentCommand &command)
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
 
     foreach (qint32 instanceId, command.instances) {
         if (hasInstanceForId(instanceId)) {
@@ -567,9 +567,9 @@ void NodeInstanceServer::setupDefaultDummyData()
     refreshBindings();
 }
 
-QList<ServerNodeInstance> NodeInstanceServer::setupInstances(const CreateSceneCommand &command)
+ServerNodeInstances NodeInstanceServer::setupInstances(const CreateSceneCommand &command)
 {
-    QList<ServerNodeInstance> instanceList = createInstances(command.instances);
+    ServerNodeInstances instanceList = createInstances(command.instances);
 
     for (const IdContainer &container : command.ids) {
         if (hasInstanceForId(container.instanceId()))
@@ -1045,7 +1045,8 @@ NodeInstanceClientInterface *NodeInstanceServer::nodeInstanceClient() const
     return m_nodeInstanceClient;
 }
 
-static QVector<InformationContainer> createInformationVector(const QList<ServerNodeInstance> &instanceList, bool initial)
+static QVector<InformationContainer> createInformationVector(const ServerNodeInstances &instanceList,
+                                                             bool initial)
 {
     QVector<InformationContainer> informationVector;
 
@@ -1125,8 +1126,8 @@ static QVector<InformationContainer> createInformationVector(const QList<ServerN
     return informationVector;
 }
 
-
-ChildrenChangedCommand NodeInstanceServer::createChildrenChangedCommand(const ServerNodeInstance &parentInstance, const QList<ServerNodeInstance> &instanceList) const
+ChildrenChangedCommand NodeInstanceServer::createChildrenChangedCommand(
+    const ServerNodeInstance &parentInstance, const ServerNodeInstances &instanceList) const
 {
     QVector<qint32> instanceVector;
 
@@ -1136,7 +1137,8 @@ ChildrenChangedCommand NodeInstanceServer::createChildrenChangedCommand(const Se
     return ChildrenChangedCommand(parentInstance.instanceId(), instanceVector, createInformationVector(instanceList, false));
 }
 
-InformationChangedCommand NodeInstanceServer::createAllInformationChangedCommand(const QList<ServerNodeInstance> &instanceList, bool initial) const
+InformationChangedCommand NodeInstanceServer::createAllInformationChangedCommand(
+    const ServerNodeInstances &instanceList, bool initial) const
 {
     return InformationChangedCommand(createInformationVector(instanceList, initial));
 }
@@ -1147,7 +1149,8 @@ static bool supportedVariantType(int type)
             && type != QMetaType::QModelIndex && type != QMetaType::VoidStar;
 }
 
-ValuesChangedCommand NodeInstanceServer::createValuesChangedCommand(const QList<ServerNodeInstance> &instanceList) const
+ValuesChangedCommand NodeInstanceServer::createValuesChangedCommand(
+    const ServerNodeInstances &instanceList) const
 {
     QVector<PropertyValueContainer> valueVector;
 
@@ -1162,7 +1165,8 @@ ValuesChangedCommand NodeInstanceServer::createValuesChangedCommand(const QList<
     return ValuesChangedCommand(valueVector);
 }
 
-ComponentCompletedCommand NodeInstanceServer::createComponentCompletedCommand(const QList<ServerNodeInstance> &instanceList)
+ComponentCompletedCommand NodeInstanceServer::createComponentCompletedCommand(
+    const ServerNodeInstances &instanceList)
 {
     QVector<qint32> idVector;
     foreach (const ServerNodeInstance &instance, instanceList) {
@@ -1173,7 +1177,8 @@ ComponentCompletedCommand NodeInstanceServer::createComponentCompletedCommand(co
     return ComponentCompletedCommand(idVector);
 }
 
-ChangeSelectionCommand NodeInstanceServer::createChangeSelectionCommand(const QList<ServerNodeInstance> &instanceList)
+ChangeSelectionCommand NodeInstanceServer::createChangeSelectionCommand(
+    const ServerNodeInstances &instanceList)
 {
     QVector<qint32> idVector;
     for (const ServerNodeInstance &instance : instanceList) {
@@ -1266,7 +1271,8 @@ void NodeInstanceServer::removeInstanceRelationsip(qint32 instanceId)
     }
 }
 
-PixmapChangedCommand NodeInstanceServer::createPixmapChangedCommand(const QList<ServerNodeInstance> &instanceList) const
+PixmapChangedCommand NodeInstanceServer::createPixmapChangedCommand(
+    const ServerNodeInstances &instanceList) const
 {
     QVector<ImageContainer> imageVector;
 

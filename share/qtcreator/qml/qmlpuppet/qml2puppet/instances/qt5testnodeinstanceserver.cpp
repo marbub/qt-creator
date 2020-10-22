@@ -221,7 +221,7 @@ void Qt5TestNodeInstanceServer::changeState(const ChangeStateCommand &command)
 
 void Qt5TestNodeInstanceServer::completeComponent(const CompleteComponentCommand &command)
 {
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
 
     foreach (qint32 instanceId, command.instances) {
         if (hasInstanceForId(instanceId)) {
@@ -309,10 +309,10 @@ void QmlDesigner::Qt5TestNodeInstanceServer::collectItemChangesAndSendChangeComm
     }
 }
 
-void Qt5TestNodeInstanceServer::sendChildrenChangedCommand(const QList<ServerNodeInstance> &childList)
+void Qt5TestNodeInstanceServer::sendChildrenChangedCommand(const ServerNodeInstances &childList)
 {
     QSet<ServerNodeInstance> parentSet;
-    QList<ServerNodeInstance> noParentList;
+    ServerNodeInstances noParentList;
 
     foreach (const ServerNodeInstance &child, childList) {
         if (!child.hasParent()) {

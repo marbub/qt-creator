@@ -136,7 +136,7 @@ void Qt5RenderNodeInstanceServer::createScene(const CreateSceneCommand &command)
 {
     Qt5NodeInstanceServer::createScene(command);
 
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (const InstanceContainer &container : command.instances) {
         if (hasInstanceForId(container.instanceId)) {
             ServerNodeInstance instance = instanceForId(container.instanceId);
@@ -160,7 +160,7 @@ void Qt5RenderNodeInstanceServer::completeComponent(const CompleteComponentComma
 {
     Qt5NodeInstanceServer::completeComponent(command);
 
-    QList<ServerNodeInstance> instanceList;
+    ServerNodeInstances instanceList;
     for (qint32 instanceId : command.instances) {
         if (hasInstanceForId(instanceId)) {
             ServerNodeInstance instance = instanceForId(instanceId);
