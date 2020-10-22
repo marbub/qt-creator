@@ -195,7 +195,7 @@ QList<ServerNodeInstance> NodeInstanceServer::createInstances(const QVector<Inst
     QList<ServerNodeInstance> instanceList;
     for (const InstanceContainer &instanceContainer : containerVector) {
         ServerNodeInstance instance;
-        if (instanceContainer.nodeSourceType() == InstanceContainer::ComponentSource) {
+        if (instanceContainer.nodeSourceType == InstanceContainer::ComponentSource) {
             instance = ServerNodeInstance::create(this, instanceContainer, ServerNodeInstance::WrapAsComponent);
         } else {
             instance = ServerNodeInstance::create(this, instanceContainer, ServerNodeInstance::DoNotWrapAsComponent);
@@ -203,7 +203,7 @@ QList<ServerNodeInstance> NodeInstanceServer::createInstances(const QVector<Inst
         insertInstanceRelationship(instance);
         instanceList.append(instance);
         instance.internalObject()->installEventFilter(childrenChangeEventFilter());
-        if (instanceContainer.instanceId() == 0) {
+        if (instanceContainer.instanceId == 0) {
             m_rootNodeInstance = instance;
             if (quickView())
                 quickView()->setContent(fileUrl(), m_importComponent, m_rootNodeInstance.rootQuickItem());
@@ -318,7 +318,7 @@ void NodeInstanceServer::stopRenderTimer()
 
 void NodeInstanceServer::createScene(const CreateSceneCommand &command)
 {
-    setTranslationLanguage(command.language());
+    setTranslationLanguage(command.language);
     initializeView();
 
     Internal::QmlPrivateGate::stopUnifiedTimer();
@@ -392,7 +392,7 @@ void NodeInstanceServer::reparentInstances(const QVector<ReparentContainer> &con
 
 void NodeInstanceServer::reparentInstances(const ReparentInstancesCommand &command)
 {
-    reparentInstances(command.reparentInstances());
+    reparentInstances(command.reparentInstances);
     refreshBindings();
     startRenderTimer();
 }
@@ -416,7 +416,7 @@ void NodeInstanceServer::completeComponent(const CompleteComponentCommand &comma
 {
     QList<ServerNodeInstance> instanceList;
 
-    foreach (qint32 instanceId, command.instances()) {
+    foreach (qint32 instanceId, command.instances) {
         if (hasInstanceForId(instanceId)) {
             ServerNodeInstance instance = instanceForId(instanceId);
             instance.doComponentComplete();
@@ -569,36 +569,36 @@ void NodeInstanceServer::setupDefaultDummyData()
 
 QList<ServerNodeInstance> NodeInstanceServer::setupInstances(const CreateSceneCommand &command)
 {
-    QList<ServerNodeInstance> instanceList = createInstances(command.instances());
+    QList<ServerNodeInstance> instanceList = createInstances(command.instances);
 
-    foreach (const IdContainer &container, command.ids()) {
+    for (const IdContainer &container : command.ids) {
         if (hasInstanceForId(container.instanceId()))
             instanceForId(container.instanceId()).setId(container.id());
     }
 
-    foreach (const PropertyValueContainer &container, command.valueChanges()) {
+    for (const PropertyValueContainer &container : command.valueChanges) {
         if (container.isDynamic())
             setInstancePropertyVariant(container);
     }
 
-    foreach (const PropertyValueContainer &container, command.valueChanges()) {
+    for (const PropertyValueContainer &container : command.valueChanges) {
         if (!container.isDynamic())
             setInstancePropertyVariant(container);
     }
 
-    reparentInstances(command.reparentInstances());
+    reparentInstances(command.reparentInstances);
 
-    foreach (const PropertyBindingContainer &container, command.bindingChanges()) {
+    for (const PropertyBindingContainer &container : command.bindingChanges) {
         if (container.isDynamic())
             setInstancePropertyBinding(container);
     }
 
-    foreach (const PropertyBindingContainer &container, command.bindingChanges()) {
+    for (const PropertyBindingContainer &container : command.bindingChanges) {
         if (!container.isDynamic())
             setInstancePropertyBinding(container);
     }
 
-    foreach (const PropertyValueContainer &container, command.auxiliaryChanges()) {
+    for (const PropertyValueContainer &container : command.auxiliaryChanges) {
         setInstanceAuxiliaryData(container);
     }
 

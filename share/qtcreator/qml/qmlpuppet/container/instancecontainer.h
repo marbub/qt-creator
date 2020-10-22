@@ -35,32 +35,20 @@ namespace QmlDesigner {
 
 class InstanceContainer;
 
-QDataStream &operator<<(QDataStream &out, const InstanceContainer &container);
-QDataStream &operator>>(QDataStream &in, InstanceContainer &container);
-
 class InstanceContainer
 {
     friend QDataStream &operator>>(QDataStream &in, InstanceContainer &container);
 
 public:
-    enum NodeSourceType {
-        NoSource = 0,
-        CustomParserSource = 1,
-        ComponentSource = 2
-    };
+    enum NodeSourceType { NoSource = 0, CustomParserSource = 1, ComponentSource = 2 };
 
-    enum NodeMetaType {
-        ObjectMetaType,
-        ItemMetaType
-    };
+    enum NodeMetaType { ObjectMetaType, ItemMetaType };
 
-    enum NodeFlag {
-        ParentTakesOverRendering = 1
-    };
+    enum NodeFlag { ParentTakesOverRendering = 1 };
 
-     Q_DECLARE_FLAGS(NodeFlags, NodeFlag)
+    Q_DECLARE_FLAGS(NodeFlags, NodeFlag)
 
-    InstanceContainer();
+    InstanceContainer() = default;
     InstanceContainer(qint32 instanceId,
                       const TypeName &type,
                       int majorNumber,
@@ -69,32 +57,71 @@ public:
                       const QString &nodeSource,
                       NodeSourceType nodeSourceType,
                       NodeMetaType metaType,
-                      NodeFlags metaFlags);
+                      NodeFlags metaFlags)
+        : instanceId(instanceId)
+        , type(properDelemitingOfType(type))
+        , majorNumber(majorNumber)
+        , minorNumber(minorNumber)
+        , componentPath(componentPath)
+        , nodeSource(nodeSource)
+        , nodeSourceType(nodeSourceType)
+        , metaType(metaType)
+        , metaFlags(metaFlags)
+    {}
 
-    qint32 instanceId() const;
-    TypeName type() const;
-    int majorNumber() const;
-    int minorNumber() const;
-    QString componentPath() const;
-    QString nodeSource() const;
-    NodeSourceType nodeSourceType() const;
-    NodeMetaType metaType() const;
-    bool checkFlag(NodeFlag flag) const;
-    NodeFlags metaFlags() const;
+    static TypeName properDelemitingOfType(const TypeName &typeName)
+    {
+        TypeName convertedTypeName = typeName;
+        int lastIndex = typeName.lastIndexOf('.');
+        if (lastIndex > 0)
+            convertedTypeName[lastIndex] = '/';
 
-private:
-    qint32 m_instanceId = -1;
-    TypeName m_type;
-    qint32 m_majorNumber = -1;
-    qint32 m_minorNumber = -1;
-    QString m_componentPath;
-    QString m_nodeSource;
-    qint32 m_nodeSourceType = 0;
-    qint32 m_metaType = 0;
-    qint32 m_metaFlags = 0;
+        return convertedTypeName;
+    }
+
+    friend QDataStream &operator<<(QDataStream &out, const InstanceContainer &container)
+    {
+        out << container.instanceId;
+        out << container.type;
+        out << container.majorNumber;
+        out << container.minorNumber;
+        out << container.componentPath;
+        out << container.nodeSource;
+        out << qint32(container.nodeSourceType);
+        out << qint32(container.metaType);
+        out << qint32(container.metaFlags);
+
+        return out;
+    }
+
+    friend QDataStream &operator>>(QDataStream &in, InstanceContainer &container)
+    {
+        in >> container.instanceId;
+        in >> container.type;
+        in >> container.majorNumber;
+        in >> container.minorNumber;
+        in >> container.componentPath;
+        in >> container.nodeSource;
+        in >> container.nodeSourceType;
+        in >> container.metaType;
+        in >> container.metaFlags;
+
+        return in;
+    }
+
+public:
+    qint32 instanceId = -1;
+    TypeName type;
+    qint32 majorNumber = -1;
+    qint32 minorNumber = -1;
+    QString componentPath;
+    QString nodeSource;
+    NodeSourceType nodeSourceType = {};
+    NodeMetaType metaType = {};
+    NodeFlags metaFlags;
 };
 
-QDebug operator <<(QDebug debug, const InstanceContainer &command);
+QDebug operator<<(QDebug debug, const InstanceContainer &command);
 
 } // namespace QmlDesigner
 

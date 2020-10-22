@@ -25,41 +25,14 @@
 
 #include "reparentinstancescommand.h"
 
-#include <QDataStream>
 #include <QDebug>
 
 namespace QmlDesigner {
 
-ReparentInstancesCommand::ReparentInstancesCommand() = default;
-
-ReparentInstancesCommand::ReparentInstancesCommand(const QVector<ReparentContainer> &container)
-    : m_reparentInstanceVector(container)
+QDebug operator<<(QDebug debug, const ReparentInstancesCommand &command)
 {
-}
-
-QVector<ReparentContainer> ReparentInstancesCommand::reparentInstances() const
-{
-    return m_reparentInstanceVector;
-}
-
-
-QDataStream &operator<<(QDataStream &out, const ReparentInstancesCommand &command)
-{
-    out << command.reparentInstances();
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ReparentInstancesCommand &command)
-{
-    in >> command.m_reparentInstanceVector;
-
-    return in;
-}
-
-QDebug operator <<(QDebug debug, const ReparentInstancesCommand &command)
-{
-    return debug.nospace() << "ReparentInstancesCommand(reparentInstances: " << command.m_reparentInstanceVector << ")";
+    return debug.nospace() << "ReparentInstancesCommand(reparentInstances: "
+                           << command.reparentInstances << ")";
 }
 
 } // namespace QmlDesigner

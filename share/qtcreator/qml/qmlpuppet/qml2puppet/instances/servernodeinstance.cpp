@@ -160,14 +160,6 @@ bool ServerNodeInstance::isSubclassOf(const QString &superTypeName) const
     return isSubclassOf(internalObject(), superTypeName.toUtf8());
 }
 
-/*!
-\brief Creates a new NodeInstace for this NodeMetaInfo
-
-\param metaInfo MetaInfo for which a Instance should be created
-\param context QQmlContext which should be used
-\returns Internal Pointer of a NodeInstance
-\see NodeMetaInfo
-*/
 Internal::ObjectNodeInstance::Pointer ServerNodeInstance::createInstance(QObject *objectToBeWrapped)
 {
     Internal::ObjectNodeInstance::Pointer instance;
@@ -223,34 +215,57 @@ ServerNodeInstance ServerNodeInstance::create(NodeInstanceServer *nodeInstanceSe
                                               const InstanceContainer &instanceContainer,
                                               ComponentWrap componentWrap)
 {
-    Q_ASSERT(instanceContainer.instanceId() != -1);
+    Q_ASSERT(instanceContainer.instanceId != -1);
     Q_ASSERT(nodeInstanceServer);
 
     QObject *object = nullptr;
     if (componentWrap == WrapAsComponent) {
-        object = Internal::ObjectNodeInstance::createComponentWrap(instanceContainer.nodeSource(), nodeInstanceServer->importCode(), nodeInstanceServer->context());
-    } else if (!instanceContainer.nodeSource().isEmpty()) {
-        object = Internal::ObjectNodeInstance::createCustomParserObject(instanceContainer.nodeSource(), nodeInstanceServer->importCode(), nodeInstanceServer->context());
-        if (object == nullptr)
-            nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType, QLatin1String("Custom parser object could not be created."), instanceContainer.instanceId());
-    } else if (!instanceContainer.componentPath().isEmpty()) {
-        object = Internal::ObjectNodeInstance::createComponent(instanceContainer.componentPath(), nodeInstanceServer->context());
+        object = Internal::ObjectNodeInstance::createComponentWrap(instanceContainer.nodeSource,
+                                                                   nodeInstanceServer->importCode(),
+                                                                   nodeInstanceServer->context());
+    } else if (!instanceContainer.nodeSource.isEmpty()) {
+        object = Internal::ObjectNodeInstance::createCustomParserObject(instanceContainer.nodeSource,
+                                                                        nodeInstanceServer->importCode(),
+                                                                        nodeInstanceServer->context());
         if (object == nullptr) {
-            object = Internal::ObjectNodeInstance::createPrimitive(QString::fromUtf8(instanceContainer.type()), instanceContainer.majorNumber(), instanceContainer.minorNumber(), nodeInstanceServer->context());
+            nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType,
+                                                QLatin1String(
+                                                    "Custom parser object could not be created."),
+                                                instanceContainer.instanceId);
+        }
+    } else if (!instanceContainer.componentPath.isEmpty()) {
+        object = Internal::ObjectNodeInstance::createComponent(instanceContainer.componentPath,
+                                                               nodeInstanceServer->context());
+        if (object == nullptr) {
+            object = Internal::ObjectNodeInstance::createPrimitive(QString::fromUtf8(
+                                                                       instanceContainer.type),
+                                                                   instanceContainer.majorNumber,
+                                                                   instanceContainer.minorNumber,
+                                                                   nodeInstanceServer->context());
             if (object == nullptr) {
-                const QString errors = getErrorString(nodeInstanceServer->engine(), instanceContainer.componentPath());
-                const QString message = QString("Component with path %1 could not be created.\n\n").arg(instanceContainer.componentPath());
-                nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType, message + errors, instanceContainer.instanceId());
+                const QString errors = getErrorString(nodeInstanceServer->engine(),
+                                                      instanceContainer.componentPath);
+                const QString message = QString("Component with path %1 could not be created.\n\n")
+                                            .arg(instanceContainer.componentPath);
+                nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType,
+                                                    message + errors,
+                                                    instanceContainer.instanceId);
             }
         }
     } else {
-        object = Internal::ObjectNodeInstance::createPrimitive(QString::fromUtf8(instanceContainer.type()), instanceContainer.majorNumber(), instanceContainer.minorNumber(), nodeInstanceServer->context());
+        object = Internal::ObjectNodeInstance::createPrimitive(QString::fromUtf8(instanceContainer.type),
+                                                               instanceContainer.majorNumber,
+                                                               instanceContainer.minorNumber,
+                                                               nodeInstanceServer->context());
         if (object == nullptr)
-            nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType, QLatin1String("Item could not be created."), instanceContainer.instanceId());
+            nodeInstanceServer->sendDebugOutput(DebugOutputCommand::ErrorType,
+                                                QLatin1String("Item could not be created."),
+                                                instanceContainer.instanceId);
     }
 
     if (object == nullptr) {
-        if (instanceContainer.metaType() == InstanceContainer::ItemMetaType) { //If we cannot instanciate the object but we know it has to be an Ttem, we create an Item instead.
+        if (instanceContainer.metaType == InstanceContainer::ItemMetaType) {
+            //If we cannot instanciate the object but we know it has to be an Ttem, we create an Item instead.
             object = Internal::ObjectNodeInstance::createPrimitive("QtQuick/Item", 2, 0, nodeInstanceServer->context());
 
             if (object == nullptr)
@@ -266,9 +281,9 @@ ServerNodeInstance ServerNodeInstance::create(NodeInstanceServer *nodeInstanceSe
 
     instance.internalInstance()->setNodeInstanceServer(nodeInstanceServer);
 
-    instance.internalInstance()->setInstanceId(instanceContainer.instanceId());
+    instance.internalInstance()->setInstanceId(instanceContainer.instanceId);
 
-    instance.internalInstance()->initialize(instance.m_nodeInstance, instanceContainer.metaFlags());
+    instance.internalInstance()->initialize(instance.m_nodeInstance, instanceContainer.metaFlags);
 
     return instance;
 }

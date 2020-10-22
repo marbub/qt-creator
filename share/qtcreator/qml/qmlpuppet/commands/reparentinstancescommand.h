@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <QDataStream>
 #include <QMetaType>
 #include <QVector>
 
@@ -38,17 +39,28 @@ class ReparentInstancesCommand
     friend QDebug operator <<(QDebug debug, const ReparentInstancesCommand &command);
 
 public:
-    ReparentInstancesCommand();
-    explicit ReparentInstancesCommand(const QVector<ReparentContainer> &container);
+    ReparentInstancesCommand() = default;
+    explicit ReparentInstancesCommand(const QVector<ReparentContainer> &container)
+        : reparentInstances(container)
+    {}
 
-    QVector<ReparentContainer> reparentInstances() const;
+    friend QDataStream &operator<<(QDataStream &out, const ReparentInstancesCommand &command)
+    {
+        out << command.reparentInstances;
 
-private:
-    QVector<ReparentContainer> m_reparentInstanceVector;
+        return out;
+    }
+
+    friend QDataStream &operator>>(QDataStream &in, ReparentInstancesCommand &command)
+    {
+        in >> command.reparentInstances;
+
+        return in;
+    }
+
+public:
+    QVector<ReparentContainer> reparentInstances;
 };
-
-QDataStream &operator<<(QDataStream &out, const ReparentInstancesCommand &command);
-QDataStream &operator>>(QDataStream &in, ReparentInstancesCommand &command);
 
 QDebug operator <<(QDebug debug, const ReparentInstancesCommand &command);
 

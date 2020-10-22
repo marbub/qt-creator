@@ -190,7 +190,7 @@ void Qt5TestNodeInstanceServer::removeProperties(const RemovePropertiesCommand &
 
 void Qt5TestNodeInstanceServer::reparentInstances(const ReparentInstancesCommand &command)
 {
-    foreach (const ReparentContainer &container, command.reparentInstances()) {
+    for (const ReparentContainer &container : command.reparentInstances) {
         if (hasInstanceForId(container.instanceId())) {
             ServerNodeInstance instance = instanceForId(container.instanceId());
             if (instance.isValid()) {
@@ -223,7 +223,7 @@ void Qt5TestNodeInstanceServer::completeComponent(const CompleteComponentCommand
 {
     QList<ServerNodeInstance> instanceList;
 
-    foreach (qint32 instanceId, command.instances()) {
+    foreach (qint32 instanceId, command.instances) {
         if (hasInstanceForId(instanceId)) {
             ServerNodeInstance instance = instanceForId(instanceId);
             instance.doComponentComplete();

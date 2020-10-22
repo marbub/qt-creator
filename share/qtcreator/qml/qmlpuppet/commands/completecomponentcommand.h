@@ -33,21 +33,30 @@ namespace QmlDesigner {
 
 class CompleteComponentCommand
 {
-    friend QDataStream &operator>>(QDataStream &in, CompleteComponentCommand &command);
-    friend QDebug operator <<(QDebug debug, const CompleteComponentCommand &command);
+public:
+    CompleteComponentCommand() = default;
+
+    CompleteComponentCommand(const QVector<qint32> &container)
+        : instances(container)
+    {}
+
+    friend QDataStream &operator<<(QDataStream &out, const CompleteComponentCommand &command)
+    {
+        out << command.instances;
+
+        return out;
+    }
+
+    friend QDataStream &operator>>(QDataStream &in, CompleteComponentCommand &command)
+    {
+        in >> command.instances;
+
+        return in;
+    }
 
 public:
-    CompleteComponentCommand();
-    explicit CompleteComponentCommand(const QVector<qint32> &container);
-
-    QVector<qint32> instances() const;
-
-private:
-    QVector<qint32> m_instanceVector;
+    QVector<qint32> instances;
 };
-
-QDataStream &operator<<(QDataStream &out, const CompleteComponentCommand &command);
-QDataStream &operator>>(QDataStream &in, CompleteComponentCommand &command);
 
 QDebug operator <<(QDebug debug, const CompleteComponentCommand &command);
 

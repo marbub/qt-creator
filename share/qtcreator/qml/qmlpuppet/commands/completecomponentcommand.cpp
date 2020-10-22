@@ -30,35 +30,9 @@
 
 namespace QmlDesigner {
 
-CompleteComponentCommand::CompleteComponentCommand() = default;
-
-CompleteComponentCommand::CompleteComponentCommand(const QVector<qint32> &container)
-    : m_instanceVector(container)
+QDebug operator<<(QDebug debug, const CompleteComponentCommand &command)
 {
-}
-
-QVector<qint32> CompleteComponentCommand::instances() const
-{
-    return m_instanceVector;
-}
-
-QDataStream &operator<<(QDataStream &out, const CompleteComponentCommand &command)
-{
-    out << command.instances();
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, CompleteComponentCommand &command)
-{
-    in >> command.m_instanceVector;
-
-    return in;
-}
-
-QDebug operator <<(QDebug debug, const CompleteComponentCommand &command)
-{
-    return debug.nospace() << "CompleteComponentCommand(instances: " << command.m_instanceVector << ")";
+    return debug.nospace() << "CompleteComponentCommand(instances: " << command.instances << ")";
 }
 
 } // namespace QmlDesigner
