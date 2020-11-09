@@ -1293,8 +1293,7 @@ void Qt5InformationNodeInstanceServer::createScene(const CreateSceneCommand &com
     Qt5NodeInstanceServer::createScene(command);
 
     QList<ServerNodeInstance> instanceList;
-    const auto instances = command.instances();
-    for (const InstanceContainer &container : instances) {
+    for (const InstanceContainer &container : std::as_const(command.instances)) {
         if (hasInstanceForId(container.instanceId())) {
             ServerNodeInstance instance = instanceForId(container.instanceId());
             if (instance.isValid())
@@ -1308,7 +1307,7 @@ void Qt5InformationNodeInstanceServer::createScene(const CreateSceneCommand &com
     nodeInstanceClient()->componentCompleted(createComponentCompletedCommand(instanceList));
 
     if (qEnvironmentVariableIsSet("QMLDESIGNER_QUICK3D_MODE"))
-        setup3DEditView(instanceList, command.edit3dToolStates());
+        setup3DEditView(instanceList, command.edit3dToolStates);
 
     QObject::connect(&m_renderModelNodeImageViewTimer, &QTimer::timeout,
                      this, &Qt5InformationNodeInstanceServer::doRenderModelNodeImageView);
