@@ -508,6 +508,7 @@ extend_qtc_plugin(QmlDesigner
     include/variantproperty.h
     include/viewmanager.h
     include/imagecache.h
+    include/imagecacheinterface.h
 )
 
 extend_qtc_plugin(QmlDesigner
