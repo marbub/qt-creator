@@ -29,6 +29,7 @@
 
 #include <cpptools/usages.h>
 #include <filepathstoragesources.h>
+#include <include/projectstorageids.h>
 #include <pchpaths.h>
 #include <projectpartartefact.h>
 #include <projectpartcontainer.h>
@@ -160,6 +161,24 @@ public:
                 valuesReturnPrecompiledHeaderTimeStamps,
                 (int projectPartId));
 
+    MOCK_METHOD(Utils::optional<QmlDesigner::InternalTypeId>,
+                valueReturnsInternalTypeId,
+                (Utils::SmallStringView name),
+                ());
+    MOCK_METHOD(Utils::optional<QmlDesigner::InternalTypeId>,
+                valueReturnsInternalTypeId,
+                (long long, long long),
+                ());
+    MOCK_METHOD(Utils::optional<QmlDesigner::InternalPropertyDeclarationId>,
+                valueReturnsInternalPropertyDeclarationId,
+                (long long, Utils::SmallStringView),
+                ());
+    MOCK_METHOD(
+        (Utils::optional<std::tuple<QmlDesigner::InternalPropertyDeclarationId, QmlDesigner::InternalTypeId>>),
+        valueReturnsPropertyDeclaration,
+        (long long, Utils::SmallStringView),
+        ());
+
     template<typename ResultType, typename... QueryTypes>
     auto value(const QueryTypes &...queryValues)
     {
@@ -191,6 +210,14 @@ public:
             return valueReturnSourceNameAndDirectoryId(queryValues...);
         else if constexpr (std::is_same_v<ResultType, ClangBackEnd::PrecompiledHeaderTimeStamps>)
             return valuesReturnPrecompiledHeaderTimeStamps(queryValues...);
+        else if constexpr (std::is_same_v<ResultType, QmlDesigner::InternalTypeId>)
+            return valueReturnsInternalTypeId(queryValues...);
+        else if constexpr (std::is_same_v<ResultType, QmlDesigner::InternalPropertyDeclarationId>)
+            return valueReturnsInternalPropertyDeclarationId(queryValues...);
+        else if constexpr (std::is_same_v<ResultType,
+                                          std::tuple<QmlDesigner::InternalPropertyDeclarationId,
+                                                     QmlDesigner::InternalTypeId>>)
+            return valueReturnsPropertyDeclaration(queryValues...);
         else
             static_assert(!std::is_same_v<ResultType, ResultType>,
                           "SqliteReadStatementMock::value does not handle result type!");

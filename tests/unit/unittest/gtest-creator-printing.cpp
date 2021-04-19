@@ -57,6 +57,7 @@
 #include <projectpartartefact.h>
 #include <projectpartentry.h>
 #include <projectpartpch.h>
+#include <projectstorageids.h>
 #include <sourcedependency.h>
 #include <sourcelocationentry.h>
 #include <sourcelocationscontainer.h>
@@ -1555,12 +1556,12 @@ std::ostream &operator<<(std::ostream &out, const Diagnostic &diag) {
 
 namespace QmlDesigner {
 
-std::ostream &operator<<(std::ostream &out, const ModelNode &node)
+std::ostream &operator<<(std::ostream &out, const ModelNode &id)
 {
-    if (!node.isValid())
+    if (!id.isValid())
         return out << "(invalid)";
 
-    return out << "(" << node.id() << ")";
+    return out << "(" << id.id() << ")";
 }
 std::ostream &operator<<(std::ostream &out, const VariantProperty &property)
 {
@@ -1570,6 +1571,17 @@ std::ostream &operator<<(std::ostream &out, const VariantProperty &property)
     return out << "(" << property.parentModelNode() << ", " << property.name() << ", "
                << property.value() << ")";
 }
+
+template<auto Type>
+std::ostream &operator<<(std::ostream &out, const InternalId<Type> &id)
+{
+    return out << "(" << id.id << ")";
+}
+
+template std::ostream &operator<<(std::ostream &out,
+                                  const InternalId<QmlDesigner::InternalIdType::Type> &id);
+template std::ostream &operator<<(
+    std::ostream &out, const InternalId<QmlDesigner::InternalIdType::PropertyDeclaration> &id);
 
 namespace Internal {
 std::ostream &operator<<(std::ostream &out, const ImageCacheStorageImageEntry &entry)

@@ -374,10 +374,13 @@ std::ostream &operator<<(std::ostream &out, const Diagnostic &diag);
 namespace QmlDesigner {
 class ModelNode;
 class VariantProperty;
+template<auto Type>
+class InternalId;
 
 std::ostream &operator<<(std::ostream &out, const ModelNode &node);
 std::ostream &operator<<(std::ostream &out, const VariantProperty &property);
-
+template<auto Type>
+std::ostream &operator<<(std::ostream &out, const InternalId<Type> &id);
 namespace Internal {
 class ImageCacheStorageImageEntry;
 class ImageCacheStorageIconEntry;

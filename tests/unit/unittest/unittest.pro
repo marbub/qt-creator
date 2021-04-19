@@ -68,6 +68,7 @@ SOURCES += \
     gtest-qt-printing.cpp \
     asynchronousimagecache-test.cpp \
     nodelistproperty-test.cpp \
+    projectstorage-test.cpp \
     synchronousimagecache-test.cpp \
     imagecachegenerator-test.cpp \
     imagecachestorage-test.cpp \
@@ -140,7 +141,8 @@ SOURCES += \
     sqlstatementbuilder-test.cpp \
     createtablesqlstatementbuilder-test.cpp \
     sqlitereadstatementmock.cpp \
-    sqlitewritestatementmock.cpp
+    sqlitewritestatementmock.cpp\
+    sqlitereadwritestatementmock.cpp
 
 !isEmpty(QTC_UNITTEST_BUILD_CPP_PARSER):SOURCES += matchingtext-test.cpp
 
@@ -315,7 +317,8 @@ HEADERS += \
     sqlitereadstatementmock.h \
     sqlitestatementmock.h \
     sqlitetransactionbackendmock.h \
-    sqlitewritestatementmock.h
+    sqlitewritestatementmock.h \
+    sqlitereadwritestatementmock.h
 
 
 !isEmpty(LIBCLANG_LIBS) {

@@ -70,4 +70,8 @@ HEADERS += \
     $$PWD/designercore/include/signalhandlerproperty.h \
     $$PWD/designercore/include/variantproperty.h \
     $$PWD/designercore/rewritertransaction.h \
-    $$PWD/components/listmodeleditor/listmodeleditormodel.h
+    $$PWD/components/listmodeleditor/listmodeleditormodel.h \
+    $$PWD/designercore/metainfo/projectstorage.h \
+    $$PWD/designercore/include/projectstorageids.h
+
+
