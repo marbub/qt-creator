@@ -163,6 +163,7 @@ extern template SQLITE_EXPORT Utils::PathString BaseStatement::fetchValue<Utils:
 template<typename BaseStatement, int ResultCount>
 class StatementImplementation : public BaseStatement
 {
+    struct Resetter;
 
 public:
     using BaseStatement::BaseStatement;
@@ -236,7 +237,7 @@ public:
         bindValues(queryValues...);
 
         if (BaseStatement::next())
-            resultValue = assignValue<Utils::optional<ResultType>>();
+            resultValue = createOptionalValue<Utils::optional<ResultType>>();
 
         resetter.reset();
 
@@ -284,6 +285,82 @@ public:
 
         resetter.reset();
     }
+
+    template<typename ResultType, typename... QueryTypes>
+    auto range(const QueryTypes &...queryValues)
+    {
+        return SqliteResultRange<ResultType>{*this, queryValues...};
+    }
+
+    template<typename ResultType>
+    class SqliteResultRange
+    {
+    public:
+        class SqliteResultIteratator
+        {
+        public:
+            using iterator_category = std::input_iterator_tag;
+            using difference_type = int;
+            using value_type = ResultType;
+            using pointer = ResultType *;
+            using reference = ResultType &;
+
+            SqliteResultIteratator(StatementImplementation &statement, bool hasNext)
+                : m_statement{statement}
+                , m_hasNext{hasNext}
+            {}
+
+            SqliteResultIteratator(StatementImplementation &statement)
+                : m_statement{statement}
+                , m_hasNext{m_statement.next()}
+            {}
+
+            SqliteResultIteratator &operator++()
+            {
+                m_hasNext = m_statement.next();
+                return *this;
+            }
+
+            void operator++(int) { m_hasNext = m_statement.next(); }
+
+            friend bool operator==(const SqliteResultIteratator &first,
+                                   const SqliteResultIteratator &second)
+            {
+                return first.m_hasNext == second.m_hasNext;
+            }
+
+            friend bool operator!=(const SqliteResultIteratator &first,
+                                   const SqliteResultIteratator &second)
+            {
+                return !(first == second);
+            }
+
+            value_type operator*() const { return m_statement.createValue<ResultType>(); }
+
+        private:
+            StatementImplementation &m_statement;
+            bool m_hasNext;
+        };
+
+        template<typename... QueryTypes>
+        SqliteResultRange(StatementImplementation &statement, const QueryTypes &...queryValues)
+            : resetter{statement}
+        {
+            statement.bindValues(queryValues...);
+        }
+
+        SqliteResultRange(SqliteResultRange &) = delete;
+        SqliteResultRange &operator=(SqliteResultRange &) = delete;
+
+        ~SqliteResultRange() { resetter.reset(); }
+
+        SqliteResultIteratator begin() & { return SqliteResultIteratator{resetter.statement}; }
+
+        SqliteResultIteratator end() & { return SqliteResultIteratator{resetter.statement, false}; }
+
+    private:
+        Resetter resetter;
+    };
 
 protected:
     ~StatementImplementation() = default;
@@ -356,17 +433,28 @@ private:
         emplaceBackValues(container, std::make_integer_sequence<int, ResultCount>{});
     }
 
-    template <typename ResultOptionalType,
-              int... ColumnIndices>
-    ResultOptionalType assignValue(std::integer_sequence<int, ColumnIndices...>)
+    template<typename ResultOptionalType, int... ColumnIndices>
+    ResultOptionalType createOptionalValue(std::integer_sequence<int, ColumnIndices...>)
     {
         return ResultOptionalType(Utils::in_place, ValueGetter(*this, ColumnIndices)...);
     }
 
     template<typename ResultOptionalType>
-    ResultOptionalType assignValue()
+    ResultOptionalType createOptionalValue()
     {
-        return assignValue<ResultOptionalType>(std::make_integer_sequence<int, ResultCount>{});
+        return createOptionalValue<ResultOptionalType>(std::make_integer_sequence<int, ResultCount>{});
+    }
+
+    template<typename ResultType, int... ColumnIndices>
+    ResultType createValue(std::integer_sequence<int, ColumnIndices...>)
+    {
+        return ResultType{ValueGetter(*this, ColumnIndices)...};
+    }
+
+    template<typename ResultType>
+    ResultType createValue()
+    {
+        return createValue<ResultType>(std::make_integer_sequence<int, ResultCount>{});
     }
 
     template<typename Callable, int... ColumnIndices>

@@ -662,11 +662,76 @@ TEST_F(SqliteStatement, GetTupleValuesWithoutArguments)
                 UnorderedElementsAre(Tuple{"bar", 0, 1}, Tuple{"foo", 23.3, 2}, Tuple{"poo", 40.0, 3}));
 }
 
+TEST_F(SqliteStatement, GetTupleRangeWithoutArguments)
+{
+    using Tuple = std::tuple<Utils::SmallString, double, int>;
+    ReadStatement<3> statement("SELECT name, number, value FROM test", database);
+
+    auto range = statement.range<Tuple>();
+    std::vector<Tuple> values{range.begin(), range.end()};
+
+    ASSERT_THAT(values,
+                UnorderedElementsAre(Tuple{"bar", 0, 1}, Tuple{"foo", 23.3, 2}, Tuple{"poo", 40.0, 3}));
+}
+
+TEST_F(SqliteStatement, GetTupleRangeInForRangeLoop)
+{
+    using Tuple = std::tuple<Utils::SmallString, double, int>;
+    ReadStatement<3> statement("SELECT name, number, value FROM test", database);
+    std::vector<Tuple> values;
+
+    for (auto value : statement.range<Tuple>())
+        values.push_back(value);
+
+    ASSERT_THAT(values,
+                UnorderedElementsAre(Tuple{"bar", 0, 1}, Tuple{"foo", 23.3, 2}, Tuple{"poo", 40.0, 3}));
+}
+
+TEST_F(SqliteStatement, GetTupleRangeInForRangeLoopWithBreak)
+{
+    using Tuple = std::tuple<Utils::SmallString, double, int>;
+    ReadStatement<3> statement("SELECT name, number, value FROM test ORDER BY name", database);
+    std::vector<Tuple> values;
+
+    for (auto value : statement.range<Tuple>()) {
+        values.push_back(value);
+        if (value == Tuple{"foo", 23.3, 2})
+            break;
+    }
+
+    ASSERT_THAT(values, UnorderedElementsAre(Tuple{"bar", 0, 1}, Tuple{"foo", 23.3, 2}));
+}
+
+TEST_F(SqliteStatement, GetTupleRangeInForRangeLoopWithContinue)
+{
+    using Tuple = std::tuple<Utils::SmallString, double, int>;
+    ReadStatement<3> statement("SELECT name, number, value FROM test ORDER BY name", database);
+    std::vector<Tuple> values;
+
+    for (auto value : statement.range<Tuple>()) {
+        if (value == Tuple{"foo", 23.3, 2})
+            continue;
+        values.push_back(value);
+    }
+
+    ASSERT_THAT(values, UnorderedElementsAre(Tuple{"bar", 0, 1}, Tuple{"poo", 40.0, 3}));
+}
+
 TEST_F(SqliteStatement, GetSingleValuesWithoutArguments)
 {
     ReadStatement<1> statement("SELECT name FROM test", database);
 
     std::vector<Utils::SmallString> values = statement.values<Utils::SmallString>(3);
+
+    ASSERT_THAT(values, UnorderedElementsAre("bar", "foo", "poo"));
+}
+
+TEST_F(SqliteStatement, GetSingleRangeWithoutArguments)
+{
+    ReadStatement<1> statement("SELECT name FROM test", database);
+
+    auto range = statement.range<Utils::SmallStringView>();
+    std::vector<Utils::SmallString> values{range.begin(), range.end()};
 
     ASSERT_THAT(values, UnorderedElementsAre("bar", "foo", "poo"));
 }
@@ -697,11 +762,35 @@ TEST_F(SqliteStatement, GetSingleSqliteValuesWithoutArguments)
     ASSERT_THAT(values, UnorderedElementsAre(Eq("blah"), Eq(23.3), Eq(40), IsNull()));
 }
 
+TEST_F(SqliteStatement, GetSingleSqliteRangeWithoutArguments)
+{
+    ReadStatement<1> statement("SELECT number FROM test", database);
+    database.execute("INSERT INTO  test VALUES (NULL, NULL, NULL)");
+
+    auto range = statement.range<FooValue>();
+    std::vector<FooValue> values{range.begin(), range.end()};
+
+    ASSERT_THAT(values, UnorderedElementsAre(Eq("blah"), Eq(23.3), Eq(40), IsNull()));
+}
+
 TEST_F(SqliteStatement, GetStructValuesWithoutArguments)
 {
     ReadStatement<3> statement("SELECT name, number, value FROM test", database);
 
     auto values = statement.values<Output>(3);
+
+    ASSERT_THAT(values,
+                UnorderedElementsAre(Output{"bar", "blah", 1},
+                                     Output{"foo", "23.3", 2},
+                                     Output{"poo", "40", 3}));
+}
+
+TEST_F(SqliteStatement, GetStructRangeWithoutArguments)
+{
+    ReadStatement<3> statement("SELECT name, number, value FROM test", database);
+
+    auto range = statement.range<Output>();
+    std::vector<Output> values{range.begin(), range.end()};
 
     ASSERT_THAT(values,
                 UnorderedElementsAre(Output{"bar", "blah", 1},
@@ -719,6 +808,17 @@ TEST_F(SqliteStatement, GetValuesForSingleOutputWithBindingMultipleTimes)
     ASSERT_THAT(values, ElementsAre("poo"));
 }
 
+TEST_F(SqliteStatement, GetRangeForSingleOutputWithBindingMultipleTimes)
+{
+    ReadStatement<1> statement("SELECT name FROM test WHERE number=?", database);
+    statement.values<Utils::SmallString>(3, 40);
+
+    auto range = statement.range<Utils::SmallStringView>(40);
+    std::vector<Utils::SmallString> values{range.begin(), range.end()};
+
+    ASSERT_THAT(values, ElementsAre("poo"));
+}
+
 TEST_F(SqliteStatement, GetValuesForMultipleOutputValuesAndMultipleQueryValue)
 {
     using Tuple = std::tuple<Utils::SmallString, Utils::SmallString, long long>;
@@ -726,6 +826,18 @@ TEST_F(SqliteStatement, GetValuesForMultipleOutputValuesAndMultipleQueryValue)
         "SELECT name, number, value FROM test WHERE name=? AND number=? AND value=?", database);
 
     auto values = statement.values<Tuple>(3, "bar", "blah", 1);
+
+    ASSERT_THAT(values, ElementsAre(Tuple{"bar", "blah", 1}));
+}
+
+TEST_F(SqliteStatement, GetRangeForMultipleOutputValuesAndMultipleQueryValue)
+{
+    using Tuple = std::tuple<Utils::SmallString, Utils::SmallString, long long>;
+    ReadStatement<3> statement(
+        "SELECT name, number, value FROM test WHERE name=? AND number=? AND value=?", database);
+
+    auto range = statement.range<Tuple>("bar", "blah", 1);
+    std::vector<Tuple> values{range.begin(), range.end()};
 
     ASSERT_THAT(values, ElementsAre(Tuple{"bar", "blah", 1}));
 }
@@ -738,6 +850,22 @@ TEST_F(SqliteStatement, CallGetValuesForMultipleOutputValuesAndMultipleQueryValu
     statement.values<Tuple>(3, "bar", "blah");
 
     auto values = statement.values<Tuple>(3, "bar", "blah");
+
+    ASSERT_THAT(values, ElementsAre(Tuple{"bar", "blah", 1}));
+}
+
+TEST_F(SqliteStatement, CallGetRangeForMultipleOutputValuesAndMultipleQueryValueMultipleTimes)
+{
+    using Tuple = std::tuple<Utils::SmallString, Utils::SmallString, long long>;
+    ReadStatement<3> statement("SELECT name, number, value FROM test WHERE name=? AND number=?",
+                               database);
+    {
+        auto range = statement.range<Tuple>("bar", "blah");
+        std::vector<Tuple> values1{range.begin(), range.end()};
+    }
+
+    auto range2 = statement.range<Tuple>("bar", "blah");
+    std::vector<Tuple> values{range2.begin(), range2.end()};
 
     ASSERT_THAT(values, ElementsAre(Tuple{"bar", "blah", 1}));
 }
@@ -851,6 +979,15 @@ TEST_F(SqliteStatement, GetValuesWithoutArgumentsCallsReset)
     mockStatement.values<int>(3);
 }
 
+TEST_F(SqliteStatement, GetRangeWithoutArgumentsCallsReset)
+{
+    MockSqliteStatement mockStatement;
+
+    EXPECT_CALL(mockStatement, reset());
+
+    mockStatement.range<int>();
+}
+
 TEST_F(SqliteStatement, GetValuesWithoutArgumentsCallsResetIfExceptionIsThrown)
 {
     MockSqliteStatement mockStatement;
@@ -859,6 +996,17 @@ TEST_F(SqliteStatement, GetValuesWithoutArgumentsCallsResetIfExceptionIsThrown)
     EXPECT_CALL(mockStatement, reset());
 
     EXPECT_THROW(mockStatement.values<int>(3), Sqlite::StatementHasError);
+}
+
+TEST_F(SqliteStatement, GetRangeWithoutArgumentsCallsResetIfExceptionIsThrown)
+{
+    MockSqliteStatement mockStatement;
+    ON_CALL(mockStatement, next()).WillByDefault(Throw(Sqlite::StatementHasError("")));
+    auto range = mockStatement.range<int>();
+
+    EXPECT_CALL(mockStatement, reset());
+
+    EXPECT_THROW(range.begin(), Sqlite::StatementHasError);
 }
 
 TEST_F(SqliteStatement, GetValuesWithSimpleArgumentsCallsReset)
